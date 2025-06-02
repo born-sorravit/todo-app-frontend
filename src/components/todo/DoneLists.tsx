@@ -13,24 +13,29 @@ function DoneLists({ data }: DoneListsProps) {
         <CircleCheckBig className="text-green-500" size={18} />
         Done
       </h2>
+      {data.length > 0 ? (
+        <ScrollArea className="h-[500px] w-full rounded-none border-none p-4">
+          <div className="space-y-2">
+            {data.map((todo, index) => (
+              <div
+                key={todo.id}
+                className="flex items-center justify-between p-2 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer"
+              >
+                <div className="capitalize">
+                  <h5 className="font-semibold ">Task : {index + 1}</h5>
+                  <p className="text-sm text-gray-600">{todo.task}</p>
+                </div>
 
-      <ScrollArea className="h-[500px] w-full rounded-none border-none p-4">
-        <div className="space-y-2">
-          {data.map((todo, index) => (
-            <div
-              key={todo.id}
-              className="flex items-center justify-between p-2 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer"
-            >
-              <div className="capitalize">
-                <h5 className="font-semibold ">Task : {index + 1}</h5>
-                <p className="text-sm text-gray-600">{todo.task}</p>
+                <CircleCheck className="text-green-500" />
               </div>
-
-              <CircleCheck className="text-green-500" />
-            </div>
-          ))}
+            ))}
+          </div>
+        </ScrollArea>
+      ) : (
+        <div className="flex  flex-col justify-center items-center h-[500px]">
+          <p className="text-sm text-gray-600">No data</p>
         </div>
-      </ScrollArea>
+      )}
     </div>
   );
 }
