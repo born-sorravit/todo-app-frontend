@@ -7,21 +7,14 @@ import DeleteDialog from "../Dialog/DeleteDialog";
 import useToastStore from "@/store/toast/toast.store";
 import { toast } from "sonner";
 import { ITodos } from "@/interfaces/todo.interface";
+import { TodoServices } from "@/api/todo.api";
 
 interface TodoListsProps {
   data: ITodos[];
-  setData: React.Dispatch<React.SetStateAction<ITodos[]>>;
-  setDoneLists: React.Dispatch<React.SetStateAction<ITodos[]>>;
-  setDeleteLists: React.Dispatch<React.SetStateAction<ITodos[]>>;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
-function TodoLists({
-  data,
-  setData,
-  setDoneLists,
-  setDeleteLists,
-}: TodoListsProps) {
+function TodoLists({ data, setRefresh }: TodoListsProps) {
   const { setOpen: setOpenToast } = useToastStore();
-
   const [openModal, setOpenModal] = useState(false);
   const [currentId, setCurrentId] = useState<string>();
 
@@ -30,32 +23,56 @@ function TodoLists({
     setOpenModal(true);
   };
 
-  const handleDone = (id: string) => {
-    setDoneLists((prev) => [...prev, data.find((todo) => todo.id === id)!]);
-
-    setData((prev) => [...prev.filter((todo) => todo.id !== id)]);
-    setOpenToast(
-      "SuccessToast",
-      toast.success("Success", {
-        className: "!bg-green-400 !border-green-400",
-        description: `Done task id : ${currentId}`,
-      })
-    );
+  const handleDone = async (id: string) => {
+    try {
+      const { data } = await TodoServices.updateDone(id);
+      if (data) {
+        console.log(data);
+        setRefresh(true);
+        setOpenToast(
+          "SuccessToast",
+          toast.success("Success", {
+            className: "!bg-green-400 !border-green-400",
+            description: `Done task id : ${id}`,
+          })
+        );
+      }
+    } catch (error) {
+      console.log({ error });
+      setOpenToast(
+        "ErrorToast",
+        toast.error("Error", {
+          className: "!bg-red-400 !border-red-400",
+          description: `Can't update task id : ${id}`,
+        })
+      );
+    }
   };
 
-  const handleDelete = () => {
-    setDeleteLists((prev) => [
-      ...prev,
-      data.find((todo) => todo.id === currentId)!,
-    ]);
-    setData((prev) => prev.filter((todo) => todo.id !== currentId));
-    setOpenToast(
-      "SuccessToast",
-      toast.success("Success", {
-        className: "!bg-green-400 !border-green-400",
-        description: `Delete task id : ${currentId}`,
-      })
-    );
+  const handleDelete = async () => {
+    try {
+      const { data } = await TodoServices.updateDelete(currentId as string);
+      if (data) {
+        console.log(data);
+        setRefresh(true);
+        setOpenToast(
+          "SuccessToast",
+          toast.success("Success", {
+            className: "!bg-green-400 !border-green-400",
+            description: `Delete task id : ${currentId}`,
+          })
+        );
+      }
+    } catch (error) {
+      console.log({ error });
+      setOpenToast(
+        "ErrorToast",
+        toast.error("Error", {
+          className: "!bg-red-400 !border-red-400",
+          description: `Can't update task id : ${currentId}`,
+        })
+      );
+    }
   };
   return (
     <div className="bg-white shadow-md p-4 rounded-lg border">
@@ -63,7 +80,7 @@ function TodoLists({
 
       <ScrollArea className="h-[500px] w-full rounded-none border-none p-4">
         <div className="space-y-2">
-          {data.map((todo) => (
+          {data.map((todo, index) => (
             <div
               key={todo.id}
               className="flex items-center justify-between p-2 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer"
@@ -74,8 +91,8 @@ function TodoLists({
                   onClick={() => handleDone(todo.id)}
                 />
                 <div className="capitalize">
-                  <h5 className="font-semibold ">{todo.title}</h5>
-                  <p className="text-sm text-gray-600">{todo.description}</p>
+                  <h5 className="font-semibold ">Task : {index + 1}</h5>
+                  <p className="text-sm text-gray-600">{todo.task}</p>
                 </div>
               </div>
 

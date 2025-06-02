@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { todoInputSchema } from "../../schemas/TodoInput.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,14 +13,14 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { ITodos } from "@/interfaces/todo.interface";
 import useToastStore from "@/store/toast/toast.store";
 import { toast } from "sonner";
+import { TodoServices } from "@/api/todo.api";
 
 interface ITodoInputProps {
-  setData: React.Dispatch<React.SetStateAction<ITodos[]>>;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
-function TodoInput({ setData }: ITodoInputProps) {
+function TodoInput({ setRefresh }: ITodoInputProps) {
   const { setOpen: setOpenToast } = useToastStore();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,17 +34,9 @@ function TodoInput({ setData }: ITodoInputProps) {
   const onSubmit = async (values: z.infer<typeof todoInputSchema>) => {
     try {
       setIsLoading(true);
-      setData((prev) => [
-        ...prev,
-        {
-          id: Math.random().toString(),
-          title: values.task,
-          description: "",
-        },
-      ]);
-
-      setTimeout(() => {
-        setIsLoading(false);
+      const { data } = await TodoServices.createTodo({ task: values.task });
+      if (data) {
+        setRefresh(true);
         setOpenToast(
           "SuccessToast",
           toast.success("Success", {
@@ -52,16 +44,18 @@ function TodoInput({ setData }: ITodoInputProps) {
             description: `Create task ${values.task}`,
           })
         );
-      }, 1000);
+      }
     } catch (error) {
       console.log({ error });
       setOpenToast(
         "ErrorToast",
-        toast.error("Success", {
-          className: "!bg-green-400 !border-green-400",
-          description: `Can't create task. `,
+        toast.error("Error", {
+          className: "!bg-red-400 !border-red-400",
+          description: `Duplicate task : ${values.task}`,
         })
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 

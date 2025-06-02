@@ -5,23 +5,22 @@ import { CircleCheck } from "lucide-react";
 
 interface DoneListsProps {
   data: ITodos[];
-  setData: React.Dispatch<React.SetStateAction<ITodos[]>>;
 }
-function DoneLists({ data, setData }: DoneListsProps) {
+function DoneLists({ data }: DoneListsProps) {
   return (
     <div className="bg-green-100 shadow-md p-4 rounded-lg border-green-100">
       <h2 className="text-xl font-semibold mb-2">Done</h2>
 
       <ScrollArea className="h-[500px] w-full rounded-none border-none p-4">
         <div className="space-y-2">
-          {data.map((todo) => (
+          {data.map((todo, index) => (
             <div
               key={todo.id}
               className="flex items-center justify-between p-2 bg-green-200 rounded-lg hover:bg-green-300 cursor-pointer"
             >
               <div className="capitalize">
-                <h5 className="font-semibold ">{todo.title}</h5>
-                <p className="text-sm text-gray-600">{todo.description}</p>
+                <h5 className="font-semibold ">Task : {index + 1}</h5>
+                <p className="text-sm text-gray-600">{todo.task}</p>
               </div>
 
               <CircleCheck className="text-green-500" />
