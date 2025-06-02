@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import useToastStore from "@/store/toast/toast.store";
 import { toast } from "sonner";
 import { TodoServices } from "@/api/todo.api";
@@ -59,18 +59,36 @@ function TodoInput({ setRefresh }: ITodoInputProps) {
     }
   };
 
+  const handleClear = () => {
+    form.setValue("task", "");
+  };
+
   return (
     <div>
-      {/* <Input type="text" onChange={(e) => setTaskInput(e.target.value)} /> */}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex space-x-3">
           <FormField
             control={form.control}
             name="task"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Add a task" {...field} />
+                  <div className="relative">
+                    <Input
+                      placeholder="Add a task"
+                      className="w-[500px] pr-7"
+                      {...field}
+                    />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                      {form.getValues("task").length > 0 && (
+                        <X
+                          className="cursor-pointer"
+                          onClick={handleClear}
+                          size={18}
+                        />
+                      )}
+                    </div>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

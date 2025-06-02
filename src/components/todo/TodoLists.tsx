@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Trash } from "lucide-react";
+import { ClipboardList, Trash } from "lucide-react";
 import React, { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import DeleteDialog from "../Dialog/DeleteDialog";
@@ -76,7 +76,10 @@ function TodoLists({ data, setRefresh }: TodoListsProps) {
   };
   return (
     <div className="bg-white shadow-md p-4 rounded-lg border">
-      <h2 className="text-xl font-semibold mb-2">To-do</h2>
+      <h2 className="flex items-center gap-2 text-xl font-semibold mb-2">
+        <ClipboardList size={18} />
+        To-do
+      </h2>
 
       <ScrollArea className="h-[500px] w-full rounded-none border-none p-4">
         <div className="space-y-2">

@@ -1,5 +1,4 @@
 import React from "react";
-import Modal from "../Modal";
 
 interface MainLayoutProps {
   children: React.ReactNode;

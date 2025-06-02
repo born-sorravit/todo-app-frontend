@@ -60,8 +60,10 @@ function HomeViews() {
     <div className="container mx-auto pt-5">
       <div className="space-y-2">
         <h1 className=" font-semibold text-lg">Create new task</h1>
-        <TodoInput setRefresh={setRefresh} />
-        <FilterTodo setFilter={setFilterTodo} />
+        <div className="flex justify-between">
+          <TodoInput setRefresh={setRefresh} />
+          <FilterTodo setFilter={setFilterTodo} />
+        </div>
       </div>
       <div className="pt-10 grid grid-cols-3 gap-4">
         {isLoading ? <TodoSkeleton /> : renderTodoByStatus()}
